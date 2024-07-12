@@ -1,44 +1,78 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QComboBox, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QDateEdit, QPushButton, QMessageBox, QComboBox
+from PyQt5.QtCore import QDate, pyqtSignal
+from peewee import SqliteDatabase, Model, DateField, CharField, TextField
+import os
+
+# Удаление старой базы данных
+if os.path.exists('trainings.db'):
+    os.remove('trainings.db')
+
+db = SqliteDatabase('trainings.db')
+
+class Training(Model):
+    date = DateField()
+    map = CharField()
+    goal = CharField()
+    description = TextField()
+
+    class Meta:
+        database = db
+
+db.connect()
+db.create_tables([Training])
 
 class AddTrainingPage(QWidget):
+    training_added = pyqtSignal()  # Сигнал, который испускается при добавлении тренировки
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.init_ui()
 
+    def init_ui(self):
         layout = QVBoxLayout(self)
 
-        layout.addWidget(QLabel("Добавить тренировку"))
+        self.date_label = QLabel("Дата:")
+        layout.addWidget(self.date_label)
+        self.date_input = QDateEdit()
+        self.date_input.setDate(QDate.currentDate())
+        layout.addWidget(self.date_input)
 
-        layout.addWidget(QLabel("Выберите карту"))
-        self.map_selector = QComboBox(self)
-        self.map_selector.addItems(["Mirage", "Dust 2", "aim_botz"])
-        layout.addWidget(self.map_selector)
+        self.map_label = QLabel("Карта:")
+        layout.addWidget(self.map_label)
+        self.map_input = QComboBox()
+        self.map_input.addItems(["Mirage", "Dust 2", "aim_botz"])
+        layout.addWidget(self.map_input)
 
-        layout.addWidget(QLabel("Цель тренировки"))
-        self.goal_selector = QComboBox(self)
-        self.goal_selector.addItems(["Раскидка", "Аим"])
-        layout.addWidget(self.goal_selector)
+        self.goal_label = QLabel("Цель тренировки:")
+        layout.addWidget(self.goal_label)
+        self.goal_input = QComboBox()
+        self.goal_input.addItems(["Раскидка", "Аим"])
+        layout.addWidget(self.goal_input)
 
-        layout.addWidget(QLabel("Описание тренировки"))
-        self.description_input = QTextEdit(self)
+        self.description_label = QLabel("Описание:")
+        layout.addWidget(self.description_label)
+        self.description_input = QTextEdit()
         layout.addWidget(self.description_input)
 
-        self.submit_button = QPushButton("Добавить тренировку", self)
-        self.submit_button.clicked.connect(self.add_training)
+        self.submit_button = QPushButton("Добавить тренировку")
+        self.submit_button.clicked.connect(self.log_training)
         layout.addWidget(self.submit_button)
 
-    def add_training(self):
-        map_selected = self.map_selector.currentText()
-        goal_selected = self.goal_selector.currentText()
+    def log_training(self):
+        date = self.date_input.date().toPyDate()
+        map = self.map_input.currentText()
+        goal = self.goal_input.currentText()
         description = self.description_input.toPlainText()
 
         if not description:
             QMessageBox.warning(self, "Ошибка", "Описание не может быть пустым")
             return
 
-        # Сюда добавить базу данных
+        Training.create(date=date, map=map, goal=goal, description=description)
 
-        QMessageBox.information(self, "Тренировка добавлена", f"Карта: {map_selected}\nЦель: {goal_selected}\nОписание: {description}")
-
-        self.map_selector.setCurrentIndex(0)
-        self.goal_selector.setCurrentIndex(0)
+        self.map_input.setCurrentIndex(0)
+        self.goal_input.setCurrentIndex(0)
         self.description_input.clear()
+        QMessageBox.information(self, "Успех", "Тренировка добавлена")
+
+        self.training_added.emit()  # Испускание сигнала

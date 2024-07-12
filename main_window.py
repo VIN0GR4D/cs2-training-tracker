@@ -39,63 +39,54 @@ class MainWindow(QMainWindow):
         nav_buttons_widget = QWidget()
         nav_buttons_layout = QVBoxLayout(nav_buttons_widget)
         nav_buttons_layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)
-        nav_buttons_layout.setContentsMargins(0, 0, 0, 0)  # Удаление отступов
-        nav_buttons_layout.setSpacing(0)  # Добавление расстояния между кнопками
+        nav_buttons_layout.setContentsMargins(0, 0, 0, 0)
+        nav_buttons_layout.setSpacing(0)
 
-        button_size = QSize(120, 40)  # Определение размера кнопки
+        button_size = QSize(120, 40)
 
         # Создание кнопок навигации
         btn_home = QToolButton(self)
         btn_home.setText("Главная")
         btn_home.setIcon(self.style().standardIcon(QStyle.SP_FileIcon))
-        btn_home.setIconSize(QSize(24, 24))  # Установка размера иконки
+        btn_home.setIconSize(QSize(24, 24))
         btn_home.setFixedSize(button_size)
-        btn_home.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
+        btn_home.setStyleSheet("text-align: left;")
         btn_home.clicked.connect(lambda: self.show_page(0))
         nav_buttons_layout.addWidget(btn_home)
 
         btn_add_training = QToolButton(self)
         btn_add_training.setText("Добавить тренировку")
         btn_add_training.setIcon(self.style().standardIcon(QStyle.SP_FileDialogListView))
-        btn_add_training.setIconSize(QSize(24, 24))  # Установка размера иконки
+        btn_add_training.setIconSize(QSize(24, 24))
         btn_add_training.setFixedSize(button_size)
-        btn_add_training.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
+        btn_add_training.setStyleSheet("text-align: left;")
         btn_add_training.clicked.connect(lambda: self.show_page(1))
         nav_buttons_layout.addWidget(btn_add_training)
 
         btn_training_list = QToolButton(self)
         btn_training_list.setText("Список тренировок")
         btn_training_list.setIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
-        btn_training_list.setIconSize(QSize(24, 24))  # Установка размера иконки
+        btn_training_list.setIconSize(QSize(24, 24))
         btn_training_list.setFixedSize(button_size)
-        btn_training_list.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
+        btn_training_list.setStyleSheet("text-align: left;")
         btn_training_list.clicked.connect(lambda: self.show_page(2))
         nav_buttons_layout.addWidget(btn_training_list)
 
         btn_add_match = QToolButton(self)
         btn_add_match.setText("Добавить матч")
         btn_add_match.setIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
-        btn_add_match.setIconSize(QSize(24, 24))  # Установка размера иконки
+        btn_add_match.setIconSize(QSize(24, 24))
         btn_add_match.setFixedSize(button_size)
-        btn_add_match.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
+        btn_add_match.setStyleSheet("text-align: left;")
         btn_add_match.clicked.connect(lambda: self.show_page(3))
         nav_buttons_layout.addWidget(btn_add_match)
-
-        btn_match_list = QToolButton(self)
-        btn_match_list.setText("Список матчей")
-        btn_match_list.setIcon(self.style().standardIcon(QStyle.SP_DirIcon))
-        btn_match_list.setIconSize(QSize(24, 24))  # Установка размера иконки
-        btn_match_list.setFixedSize(button_size)
-        btn_match_list.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
-        btn_match_list.clicked.connect(lambda: self.show_page(4))
-        nav_buttons_layout.addWidget(btn_match_list)
 
         btn_help = QToolButton(self)
         btn_help.setText("Справка")
         btn_help.setIcon(self.style().standardIcon(QStyle.SP_DialogHelpButton))
-        btn_help.setIconSize(QSize(24, 24))  # Установка размера иконки
+        btn_help.setIconSize(QSize(24, 24))
         btn_help.setFixedSize(button_size)
-        btn_help.setStyleSheet("text-align: left;")  # Выравнивание текста по левому краю
+        btn_help.setStyleSheet("text-align: left;")
         btn_help.clicked.connect(lambda: self.show_page(5))
         nav_buttons_layout.addWidget(btn_help)
 
@@ -103,16 +94,22 @@ class MainWindow(QMainWindow):
 
         # Создание stacked widget
         self.stacked_widget = QStackedWidget()
-        self.stacked_widget.addWidget(ActivityChartPage(self))  # Индекс 0 - Главная страница с графиком активности
-        self.stacked_widget.addWidget(AddTrainingPage(self))  # Индекс 1 - Страница добавления тренировки
-        self.stacked_widget.addWidget(TrainingListPage(self))  # Индекс 2 - Страница списка тренировок
+        self.activity_chart_page = ActivityChartPage(self)  # Индекс 0 - Главная страница с графиком активности
+        self.add_training_page = AddTrainingPage(self)  # Индекс 1 - Страница добавления тренировки
+        self.training_list_page = TrainingListPage(self)  # Индекс 2 - Страница списка тренировок
+
+        self.stacked_widget.addWidget(self.activity_chart_page)
+        self.stacked_widget.addWidget(self.add_training_page)
+        self.stacked_widget.addWidget(self.training_list_page)
         self.stacked_widget.addWidget(NavigationPanel(self))  # Индекс 3 - Страница добавления матча
-        self.stacked_widget.addWidget(MatchesListPage(self))  # Индекс 4 - Страница списка матчей
 
         central_layout.addWidget(nav_buttons_widget, 0)
         central_layout.addWidget(self.stacked_widget, 1)
 
         self.setCentralWidget(central_widget)
+
+        # Соединение сигнала из AddTrainingPage со слотом обновления списка в TrainingListPage
+        self.add_training_page.training_added.connect(self.training_list_page.update_list)
 
     def show_page(self, index):
         self.stacked_widget.setCurrentIndex(index)

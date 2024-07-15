@@ -5,6 +5,7 @@ from pages.training_list_page import TrainingListPage
 from pages.activity_chart_page import ActivityChartPage
 from pages.add_training_page import AddTrainingPage
 from pages.add_match_page import AddMatchPage
+from pages.calendar_event_page import CalendarEventPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -107,11 +108,13 @@ class MainWindow(QMainWindow):
         self.add_training_page = AddTrainingPage(self)  # Индекс 1 - Страница добавления тренировки
         self.training_list_page = TrainingListPage(self)  # Индекс 2 - Страница списка тренировок
         self.add_match_page = AddMatchPage(self)  # Индекс 3 - Страница добавления матча
+        self.calendar_event_page = CalendarEventPage(self)  # Индекс 4 - Страница событий календаря
 
         self.stacked_widget.addWidget(self.activity_chart_page)
         self.stacked_widget.addWidget(self.add_training_page)
         self.stacked_widget.addWidget(self.training_list_page)
         self.stacked_widget.addWidget(self.add_match_page)  # Добавление страницы добавления матча
+        self.stacked_widget.addWidget(self.calendar_event_page)  # Добавление страницы событий календаря
 
         central_layout.addWidget(nav_buttons_widget, 0)
         central_layout.addWidget(self.stacked_widget, 1)

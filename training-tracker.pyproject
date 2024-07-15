@@ -6,6 +6,7 @@
         "pages/activity_chart_page.py",
         "pages/add_match_page.py",
         "pages/add_training_page.py",
+        "pages/calendar_event_page.py",
         "pages/matches_list_page.py",
         "pages/training_detail_page.py",
         "pages/training_list_page.py"

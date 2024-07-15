@@ -2,6 +2,27 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QComboBox, QLabel
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import datetime
+from peewee import SqliteDatabase, Model, DateField, BooleanField, CharField, TextField
+
+db = SqliteDatabase('trainings.db')
+
+class Training(Model):
+    date = DateField()
+    map = CharField()
+    goal = CharField()
+    description = TextField()
+
+    class Meta:
+        database = db
+
+class Match(Model):
+    date = DateField()
+    official = BooleanField()
+    stats = CharField()
+    notes = TextField()
+
+    class Meta:
+        database = db
 
 class ActivityChartPage(QWidget):
     def __init__(self, parent=None):
@@ -35,15 +56,21 @@ class ActivityChartPage(QWidget):
         dates = [today - datetime.timedelta(days=i) for i in range(days)]
         dates.reverse()
 
-        # Dummy data for the example
-        trainings = [i % 3 for i in range(days)]
-        matches = [i % 2 for i in range(days)]
+        training_counts = self.get_counts(Training, dates)
+        match_counts = self.get_counts(Match, dates)
 
-        self.ax.plot(dates, trainings, label="Тренировки")
-        self.ax.plot(dates, matches, label="Матчи")
+        self.ax.plot(dates, training_counts, label="Тренировки")
+        self.ax.plot(dates, match_counts, label="Матчи")
         self.ax.legend()
         self.ax.set_title("Активность за период")
         self.ax.set_xlabel("Дата")
         self.ax.set_ylabel("Количество")
 
         self.chart.draw()
+
+    def get_counts(self, model, dates):
+        counts = []
+        for date in dates:
+            count = model.select().where(model.date == date).count()
+            counts.append(count)
+        return counts

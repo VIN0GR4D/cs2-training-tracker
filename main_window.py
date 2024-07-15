@@ -2,9 +2,9 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QToo
 from PyQt5.QtCore import Qt, QSize
 from navigation_panel import NavigationPanel
 from pages.training_list_page import TrainingListPage
-from pages.matches_list_page import MatchesListPage
 from pages.activity_chart_page import ActivityChartPage
 from pages.add_training_page import AddTrainingPage
+from pages.add_match_page import AddMatchPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -81,6 +81,15 @@ class MainWindow(QMainWindow):
         btn_add_match.clicked.connect(lambda: self.show_page(3))
         nav_buttons_layout.addWidget(btn_add_match)
 
+        btn_match_list = QToolButton(self)
+        btn_match_list.setText("Список матчей")
+        btn_match_list.setIcon(self.style().standardIcon(QStyle.SP_DirIcon))
+        btn_match_list.setIconSize(QSize(24, 24))
+        btn_match_list.setFixedSize(button_size)
+        btn_match_list.setStyleSheet("text-align: left;")
+        btn_match_list.clicked.connect(lambda: self.show_page(4))
+        nav_buttons_layout.addWidget(btn_match_list)
+
         btn_help = QToolButton(self)
         btn_help.setText("Справка")
         btn_help.setIcon(self.style().standardIcon(QStyle.SP_DialogHelpButton))
@@ -97,19 +106,21 @@ class MainWindow(QMainWindow):
         self.activity_chart_page = ActivityChartPage(self)  # Индекс 0 - Главная страница с графиком активности
         self.add_training_page = AddTrainingPage(self)  # Индекс 1 - Страница добавления тренировки
         self.training_list_page = TrainingListPage(self)  # Индекс 2 - Страница списка тренировок
+        self.add_match_page = AddMatchPage(self)  # Индекс 3 - Страница добавления матча
 
         self.stacked_widget.addWidget(self.activity_chart_page)
         self.stacked_widget.addWidget(self.add_training_page)
         self.stacked_widget.addWidget(self.training_list_page)
-        self.stacked_widget.addWidget(NavigationPanel(self))  # Индекс 3 - Страница добавления матча
+        self.stacked_widget.addWidget(self.add_match_page)  # Добавление страницы добавления матча
 
         central_layout.addWidget(nav_buttons_widget, 0)
         central_layout.addWidget(self.stacked_widget, 1)
 
         self.setCentralWidget(central_widget)
 
-        # Соединение сигнала из AddTrainingPage со слотом обновления списка в TrainingListPage
+        # Соединение сигнала из AddTrainingPage и AddMatchPage со слотом обновления списка в TrainingListPage
         self.add_training_page.training_added.connect(self.training_list_page.update_list)
+        self.add_match_page.match_added.connect(self.training_list_page.update_list)
 
     def show_page(self, index):
         self.stacked_widget.setCurrentIndex(index)

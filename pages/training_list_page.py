@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
-from peewee import SqliteDatabase, Model, DateField, CharField, TextField
+from peewee import SqliteDatabase, Model, DateField, CharField, TextField, BooleanField
 
 db = SqliteDatabase('trainings.db')
 
@@ -8,6 +8,15 @@ class Training(Model):
     map = CharField()
     goal = CharField()
     description = TextField()
+
+    class Meta:
+        database = db
+
+class Match(Model):
+    date = DateField()
+    official = BooleanField()
+    stats = CharField()
+    notes = TextField()
 
     class Meta:
         database = db
@@ -27,7 +36,7 @@ class TrainingListPage(QWidget):
         for i in reversed(range(self.layout.count())):
             self.layout.itemAt(i).widget().setParent(None)
 
-        self.layout.addWidget(QLabel("Список тренировок:"))
+        self.layout.addWidget(QLabel("Список тренировок и матчей:"))
 
         # Получение списка тренировок из базы данных
         trainings = Training.select()
@@ -51,3 +60,26 @@ class TrainingListPage(QWidget):
             training_frame.setStyleSheet("QFrame { margin: 10px; padding: 5px; } QLabel { margin: 2px; }")
 
             self.layout.addWidget(training_frame)
+
+        # Получение списка матчей из базы данных
+        matches = Match.select()
+        for match in matches:
+            match_frame = QFrame()
+            match_frame.setFrameShape(QFrame.Box)
+            match_frame.setFrameShadow(QFrame.Raised)
+            match_layout = QVBoxLayout()
+
+            date_label = QLabel(f"Дата: {match.date}")
+            official_label = QLabel(f"Официальный: {'Да' if match.official else 'Нет'}")
+            stats_label = QLabel(f"Статистика: {match.stats}")
+            notes_label = QLabel(f"Заметки: {match.notes}")
+
+            match_layout.addWidget(date_label)
+            match_layout.addWidget(official_label)
+            match_layout.addWidget(stats_label)
+            match_layout.addWidget(notes_label)
+
+            match_frame.setLayout(match_layout)
+            match_frame.setStyleSheet("QFrame { margin: 10px; padding: 5px; } QLabel { margin: 2px; }")
+
+            self.layout.addWidget(match_frame)

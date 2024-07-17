@@ -1,11 +1,11 @@
 {
     "files": [
-        "add.png",
-        "calendar.png",
-        "cs2-logo.png",
-        "help.png",
-        "home.png",
-        "list.png",
+        "images/add.png",
+        "images/calendar.png",
+        "images/cs2-logo.png",
+        "images/help.png",
+        "images/home.png",
+        "images/list.png",
         "main.py",
         "main_window.py",
         "navigation_panel.py",

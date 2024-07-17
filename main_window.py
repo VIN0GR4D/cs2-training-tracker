@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         # Установка иконки окна
-        self.setWindowIcon(QIcon('cs2-logo.png'))
+        self.setWindowIcon(QIcon('images\cs2-logo.png'))
 
         # Создание меню
         menu_bar = self.menuBar()
@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         # Создание кнопок навигации
         btn_home = QToolButton(self)
         btn_home.setText("Главная")
-        btn_home.setIcon(QIcon('home.png'))
+        btn_home.setIcon(QIcon('images/home.png'))
         btn_home.setIconSize(QSize(24, 24))
         btn_home.setFixedSize(button_size)
         btn_home.setStyleSheet("text-align: left;")
@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
 
         btn_add_training = QToolButton(self)
         btn_add_training.setText("Добавить тренировку")
-        btn_add_training.setIcon(QIcon('add.png'))
+        btn_add_training.setIcon(QIcon('images/add.png'))
         btn_add_training.setIconSize(QSize(24, 24))
         btn_add_training.setFixedSize(button_size)
         btn_add_training.setStyleSheet("text-align: left;")
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
 
         btn_training_list = QToolButton(self)
         btn_training_list.setText("Список тренировок")
-        btn_training_list.setIcon(QIcon('list.png'))
+        btn_training_list.setIcon(QIcon('images/list.png'))
         btn_training_list.setIconSize(QSize(24, 24))
         btn_training_list.setFixedSize(button_size)
         btn_training_list.setStyleSheet("text-align: left;")
@@ -83,7 +83,7 @@ class MainWindow(QMainWindow):
 
         btn_add_match = QToolButton(self)
         btn_add_match.setText("Добавить матч")
-        btn_add_match.setIcon(QIcon('add.png'))
+        btn_add_match.setIcon(QIcon('images/add.png'))
         btn_add_match.setIconSize(QSize(24, 24))
         btn_add_match.setFixedSize(button_size)
         btn_add_match.setStyleSheet("text-align: left;")
@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
 
         btn_match_list = QToolButton(self)
         btn_match_list.setText("Список матчей")
-        btn_match_list.setIcon(QIcon('list.png'))
+        btn_match_list.setIcon(QIcon('images/list.png'))
         btn_match_list.setIconSize(QSize(24, 24))
         btn_match_list.setFixedSize(button_size)
         btn_match_list.setStyleSheet("text-align: left;")
@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
 
         btn_calendar_event = QToolButton(self)
         btn_calendar_event.setText("События календаря")
-        btn_calendar_event.setIcon(QIcon('calendar.png'))
+        btn_calendar_event.setIcon(QIcon('images/calendar.png'))
         btn_calendar_event.setIconSize(QSize(24, 24))
         btn_calendar_event.setFixedSize(button_size)
         btn_calendar_event.setStyleSheet("text-align: left;")
@@ -113,7 +113,7 @@ class MainWindow(QMainWindow):
 
         btn_help = QToolButton(self)
         btn_help.setText("Справка")
-        btn_help.setIcon(QIcon('help.png'))
+        btn_help.setIcon(QIcon('images/help.png'))
         btn_help.setIconSize(QSize(24, 24))
         btn_help.setFixedSize(button_size)
         btn_help.setStyleSheet("text-align: left;")

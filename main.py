@@ -14,9 +14,6 @@ def main():
 
     app = QApplication(sys.argv)
 
-    # Установка иконки приложения
-    app.setWindowIcon(QIcon('cs2-logo.png'))
-
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())

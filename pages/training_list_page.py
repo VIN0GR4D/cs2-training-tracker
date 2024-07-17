@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
-from peewee import SqliteDatabase, Model, DateField, CharField, TextField, BooleanField
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame, QScrollArea, QSizePolicy, QPushButton, QMessageBox, QMenu, QToolButton
+from peewee import SqliteDatabase, Model, DateField, CharField, TextField
 
 db = SqliteDatabase('trainings.db')
 
@@ -12,31 +12,28 @@ class Training(Model):
     class Meta:
         database = db
 
-class Match(Model):
-    date = DateField()
-    official = BooleanField()
-    stats = CharField()
-    notes = TextField()
-
-    class Meta:
-        database = db
-
 class TrainingListPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
 
     def init_ui(self):
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        self.layout = QVBoxLayout(self)
+        self.scroll_area = QScrollArea(self)
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_content = QWidget()
+        self.scroll_layout = QVBoxLayout(self.scroll_content)
+        self.scroll_area.setWidget(self.scroll_content)
+
+        self.layout.addWidget(QLabel("Список тренировок:"))
+        self.layout.addWidget(self.scroll_area)
+
         self.update_list()
 
     def update_list(self):
         # Очистка текущего списка
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().setParent(None)
-
-        self.layout.addWidget(QLabel("Список тренировок и матчей:"))
+        for i in reversed(range(self.scroll_layout.count())):
+            self.scroll_layout.itemAt(i).widget().setParent(None)
 
         # Получение списка тренировок из базы данных
         trainings = Training.select()
@@ -51,35 +48,29 @@ class TrainingListPage(QWidget):
             goal_label = QLabel(f"Цель: {training.goal}")
             description_label = QLabel(f"Описание: {training.description}")
 
+            # Создание кнопки с выпадающим меню
+            action_button = QToolButton()
+            action_button.setText("Действия")
+            action_button.setPopupMode(QToolButton.InstantPopup)
+            menu = QMenu(action_button)
+            delete_action = menu.addAction("Удалить")
+            delete_action.triggered.connect(lambda _, t=training: self.delete_training(t))
+            action_button.setMenu(menu)
+
             training_layout.addWidget(date_label)
             training_layout.addWidget(map_label)
             training_layout.addWidget(goal_label)
             training_layout.addWidget(description_label)
+            training_layout.addWidget(action_button)
 
             training_frame.setLayout(training_layout)
-            training_frame.setStyleSheet("QFrame { margin: 10px; padding: 5px; } QLabel { margin: 2px; }")
+            training_frame.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+            training_frame.setStyleSheet("QFrame { margin: 5px; padding: 5px; } QLabel { margin: 1px; }")
 
-            self.layout.addWidget(training_frame)
+            self.scroll_layout.addWidget(training_frame)
 
-        # Получение списка матчей из базы данных
-        matches = Match.select()
-        for match in matches:
-            match_frame = QFrame()
-            match_frame.setFrameShape(QFrame.Box)
-            match_frame.setFrameShadow(QFrame.Raised)
-            match_layout = QVBoxLayout()
-
-            date_label = QLabel(f"Дата: {match.date}")
-            official_label = QLabel(f"Официальный: {'Да' if match.official else 'Нет'}")
-            stats_label = QLabel(f"Статистика: {match.stats}")
-            notes_label = QLabel(f"Заметки: {match.notes}")
-
-            match_layout.addWidget(date_label)
-            match_layout.addWidget(official_label)
-            match_layout.addWidget(stats_label)
-            match_layout.addWidget(notes_label)
-
-            match_frame.setLayout(match_layout)
-            match_frame.setStyleSheet("QFrame { margin: 10px; padding: 5px; } QLabel { margin: 2px; }")
-
-            self.layout.addWidget(match_frame)
+    def delete_training(self, training):
+        confirm = QMessageBox.question(self, "Подтверждение удаления", "Вы уверены, что хотите удалить эту тренировку?", QMessageBox.Yes | QMessageBox.No)
+        if confirm == QMessageBox.Yes:
+            training.delete_instance()
+            self.update_list()

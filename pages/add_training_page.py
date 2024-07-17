@@ -1,11 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QDateEdit, QPushButton, QMessageBox, QComboBox
 from PyQt5.QtCore import QDate, pyqtSignal
 from peewee import SqliteDatabase, Model, DateField, CharField, TextField
-import os
-
-# Удаление старой базы данных
-if os.path.exists('trainings.db'):
-    os.remove('trainings.db')
 
 db = SqliteDatabase('trainings.db')
 
@@ -19,7 +14,7 @@ class Training(Model):
         database = db
 
 db.connect()
-db.create_tables([Training])
+db.create_tables([Training], safe=True)
 
 class AddTrainingPage(QWidget):
     training_added = pyqtSignal()  # Сигнал, который испускается при добавлении тренировки

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QDateEdit, QPushButton, QMessageBox, QComboBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QDateEdit, QPushButton, QMessageBox, QComboBox, QHBoxLayout
 from PyQt5.QtCore import QDate, pyqtSignal
 from peewee import SqliteDatabase, Model, DateField, BooleanField, IntegerField, FloatField, TextField
 
@@ -42,30 +42,34 @@ class AddMatchPage(QWidget):
         self.official_input.addItems(["Да", "Нет"])
         layout.addWidget(self.official_input)
 
+        stats_layout = QHBoxLayout()
+
         self.kills_label = QLabel("Kills:")
-        layout.addWidget(self.kills_label)
+        stats_layout.addWidget(self.kills_label)
         self.kills_input = QLineEdit()
-        layout.addWidget(self.kills_input)
+        stats_layout.addWidget(self.kills_input)
 
         self.assists_label = QLabel("Assists:")
-        layout.addWidget(self.assists_label)
+        stats_layout.addWidget(self.assists_label)
         self.assists_input = QLineEdit()
-        layout.addWidget(self.assists_input)
+        stats_layout.addWidget(self.assists_input)
 
         self.deaths_label = QLabel("Deaths:")
-        layout.addWidget(self.deaths_label)
+        stats_layout.addWidget(self.deaths_label)
         self.deaths_input = QLineEdit()
-        layout.addWidget(self.deaths_input)
+        stats_layout.addWidget(self.deaths_input)
 
         self.kd_ratio_label = QLabel("K/D Ratio:")
-        layout.addWidget(self.kd_ratio_label)
+        stats_layout.addWidget(self.kd_ratio_label)
         self.kd_ratio_input = QLineEdit()
-        layout.addWidget(self.kd_ratio_input)
+        stats_layout.addWidget(self.kd_ratio_input)
 
         self.rating_label = QLabel("Rating 2.0:")
-        layout.addWidget(self.rating_label)
+        stats_layout.addWidget(self.rating_label)
         self.rating_input = QLineEdit()
-        layout.addWidget(self.rating_input)
+        stats_layout.addWidget(self.rating_input)
+
+        layout.addLayout(stats_layout)
 
         self.notes_label = QLabel("Заметки:")
         layout.addWidget(self.notes_label)
@@ -75,6 +79,8 @@ class AddMatchPage(QWidget):
         self.submit_button = QPushButton("Добавить матч")
         self.submit_button.clicked.connect(self.log_match)
         layout.addWidget(self.submit_button)
+
+        self.setLayout(layout)
 
     def log_match(self):
         date = self.date_input.date().toPyDate()

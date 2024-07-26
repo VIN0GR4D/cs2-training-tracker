@@ -8,6 +8,7 @@ from pages.add_training_page import AddTrainingPage
 from pages.add_match_page import AddMatchPage
 from pages.calendar_event_page import CalendarEventPage
 from pages.matches_list_page import MatchesListPage
+from pages.statistics_page import StatisticsPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,7 +18,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         # Установка иконки окна
-        self.setWindowIcon(QIcon('images\cs2-logo.png'))
+        self.setWindowIcon(QIcon('images/cs2-logo.png'))
 
         # Создание меню
         menu_bar = self.menuBar()
@@ -111,13 +112,24 @@ class MainWindow(QMainWindow):
         btn_calendar_event.setToolTip("Просмотреть события календаря")
         nav_buttons_layout.addWidget(btn_calendar_event)
 
+        # Добавляем кнопку для статистики
+        btn_statistics = QToolButton(self)
+        btn_statistics.setText("Статистика")
+        btn_statistics.setIcon(QIcon('images/stats.png'))
+        btn_statistics.setIconSize(QSize(24, 24))
+        btn_statistics.setFixedSize(button_size)
+        btn_statistics.setStyleSheet("text-align: left;")
+        btn_statistics.clicked.connect(lambda: self.show_page(6))
+        btn_statistics.setToolTip("Просмотреть статистику")
+        nav_buttons_layout.addWidget(btn_statistics)
+
         btn_help = QToolButton(self)
         btn_help.setText("Справка")
         btn_help.setIcon(QIcon('images/help.png'))
         btn_help.setIconSize(QSize(24, 24))
         btn_help.setFixedSize(button_size)
         btn_help.setStyleSheet("text-align: left;")
-        btn_help.clicked.connect(lambda: self.show_page(6))
+        btn_help.clicked.connect(lambda: self.show_page(7))
         btn_help.setToolTip("Открыть справку")
         nav_buttons_layout.addWidget(btn_help)
 
@@ -131,13 +143,17 @@ class MainWindow(QMainWindow):
         self.add_match_page = AddMatchPage(self)  # Индекс 3 - Страница добавления матча
         self.matches_list_page = MatchesListPage(self)  # Индекс 4 - Страница списка матчей
         self.calendar_event_page = CalendarEventPage(self)  # Индекс 5 - Страница событий календаря
+        self.statistics_page = StatisticsPage(self)  # Индекс 6 - Страница статистики
+        self.help_page = QWidget()  # Индекс 7 - Страница справки (просто пустая для примера)
 
         self.stacked_widget.addWidget(self.activity_chart_page)
         self.stacked_widget.addWidget(self.add_training_page)
         self.stacked_widget.addWidget(self.training_list_page)
-        self.stacked_widget.addWidget(self.add_match_page)  # Добавление страницы добавления матча
-        self.stacked_widget.addWidget(self.matches_list_page)  # Добавление страницы списка матчей
-        self.stacked_widget.addWidget(self.calendar_event_page)  # Добавление страницы событий календаря
+        self.stacked_widget.addWidget(self.add_match_page)
+        self.stacked_widget.addWidget(self.matches_list_page)
+        self.stacked_widget.addWidget(self.calendar_event_page)
+        self.stacked_widget.addWidget(self.statistics_page)  # Добавление страницы статистики
+        self.stacked_widget.addWidget(self.help_page)
 
         central_layout.addWidget(nav_buttons_widget, 0)
         central_layout.addWidget(self.stacked_widget, 1)
